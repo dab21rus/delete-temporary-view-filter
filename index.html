@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <style>
+
+
+#myInput {
+  
+  background-position: 10px 12px;
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 14px;
+  padding: 12px 20px 12px 40px;
+  border: 1px solid #ddd;
+  margin-bottom: 0px;
+}
+
+#myUL {
+  list-style-type: none;
+  overflow: auto;
+  height: 83vh;
+  padding: 0%;
+  margin: 0;
+
+}
+
+#massSelectUL {
+  list-style-type: none;
+  padding: 0%;
+  margin: 0;
+
+}
+
+
+#desel {
+  margin-left: 10px;
+
+}
+
+#saveButton {
+  display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+
+</style>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+    <title></title>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+
+<input type="text" id="myInput" onkeyup="searchHide()" placeholder="" title="Type in a word">
+
+<div class="container-fluid">
+<a href="" id="sel" onclick="return selectAll()"></a> 
+<a href="" id="desel" onclick="return deselectAll()"></a>
+</div>
+<ul class="list-group" id="myUL">
+  
+</ul>
+
+<script> 
+document.getElementById("myInput").placeholder = <?= plchldr ?>;
+document.getElementById("sel").innerHTML = <?= selectAll ?>;
+document.getElementById("desel").innerHTML = <?= clearAll ?>;
+
+let vall = JSON.parse(<?= data ?>);
+  
+  for(let i=0; i<vall.length; i++){
+    let ul = document.getElementById("myUL");
+    let li = document.createElement("li");
+    li.setAttribute("class", "list-group-item");
+    ul.prepend(li, );
+    let itm = document.createElement("input");
+    itm.setAttribute("class", "form-check-input me-1");
+    itm.type = "checkbox";
+    itm.id = vall[i][2];  
+    let label = document.createElement("label");
+    label.htmlFor =  itm.id;
+    label.textContent = vall[i][0];
+    label.setAttribute("title", "id: " + vall[i][1]);
+    li.appendChild(itm);
+    li.appendChild(label);   
+    
+  };
+
+function searchHide() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("myInput");
+    filter = input.value.toUpperCase();
+    ul = document.getElementById("myUL");
+    li = ul.getElementsByTagName("li");
+    
+    for (i = 0; i < li.length; i++) {
+        
+        a = li[i].getElementsByTagName("input")[0];
+        
+        if (a.id.toUpperCase().indexOf(filter) > -1) {
+            li[i].style.display = "";
+        } else {
+            li[i].style.display = "none";
+
+        }
+    }
+}
+function selectAll() {
+  ul = document.getElementById("myUL");
+  li = ul.getElementsByTagName("li");
+  for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("input")[0];
+        if (li[i].style.display == "") {
+          a.checked = true;
+        }
+  }
+return false;
+}
+
+function deselectAll() {
+  ul = document.getElementById("myUL");
+  li = ul.getElementsByTagName("li");
+  for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("input")[0];
+        if (li[i].style.display == "") {
+          a.checked = false;
+        }
+  }
+return false;
+}
+
+</script>
+  <div class="container">
+  <div class="row">
+    <div class="col">
+      <button type="button" id="saveButton" class="btn btn-danger"></button> 
+    </div>
+    <div class="col">
+      <button type="button" id="cancelButton" class="btn btn-primary" onclick = "google.script.host.close ()"></button>
+    </div>
+  </div>
+  
+
+<script>
+let buttonDel = <?= buttonDel ?>;
+let buttonCanc = <?= buttonCanc ?>;
+document.getElementById("saveButton").innerHTML = buttonDel;
+document.getElementById("cancelButton").innerHTML = buttonCanc;
+document.getElementById("saveButton").addEventListener("click",buttonSaveClick);
+
+
+function buttonSaveClick(){
+    let ul = document.getElementById("myUL");
+    let checkboxes = ul.querySelectorAll(`input`);
+    let values = [];
+    checkboxes.forEach((checkbox) => { if (checkbox.checked) {
+    values.push(checkbox.getAttribute("id"));
+    } 
+    });
+    
+  let data = values;
+
+    google.script.run.withFailureHandler(onFailure).withSuccessHandler(onSuccess).buttonSave(data);
+    function onSuccess() {
+    google.script.host.close();
+    }
+    function onFailure(error) {
+      alert(error);
+    };
+};
+
+
+
+</script>
+
+  </body>
+</html>
